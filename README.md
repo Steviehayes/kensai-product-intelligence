@@ -8,7 +8,7 @@ across sources, and answers questions — with an exact source snippet behind ev
 answer and every table cell, and an honest "not found" where the corpus is silent.
 
 > Built for the Kensai take-home. The documents (not the live web) are the source
-> of truth. British English throughout.
+> of truth.
 
 ---
 

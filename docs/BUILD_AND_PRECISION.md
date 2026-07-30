@@ -1,6 +1,6 @@
 # How this application was built, and why it is precise
 
-*A four-page summary for the Kensai take-home. British English throughout.*
+*A four-page summary for the Kensai take-home.*
 
 ---
 
