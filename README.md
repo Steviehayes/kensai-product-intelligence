@@ -1,5 +1,7 @@
 # Kensai — Product Intelligence Agent
 
+[![CI](https://github.com/Steviehayes/kensai-product-intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/Steviehayes/kensai-product-intelligence/actions/workflows/ci.yml)
+
 A small full-stack agent that turns eight messy, conflicting supplement documents
 into clean, **source-traceable** intelligence. It ingests the corpus into a
 knowledge base, extracts structured product data, cross-checks every marketing
