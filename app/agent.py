@@ -173,6 +173,9 @@ class KnowledgeBase:
 
     @staticmethod
     def _citations(cells, hits) -> list[Citation]:
+        # Prefer the reconciled cell citations — those are the exact sources the
+        # value was read from. Only fall back to raw retrieved snippets when no
+        # structured fact matched, so we never cite a tangential document.
         seen: set[tuple] = set()
         out: list[Citation] = []
         for c in cells:
@@ -181,9 +184,7 @@ class KnowledgeBase:
                 if key not in seen:
                     seen.add(key)
                     out.append(ci)
-        for chunk, _ in hits[:3]:
-            key = (chunk.doc_id, chunk.text)
-            if key not in seen:
-                seen.add(key)
+        if not out:
+            for chunk, _ in hits[:3]:
                 out.append(Citation(doc_id=chunk.doc_id, title=chunk.title, url=chunk.url, snippet=chunk.text))
         return out[:8]

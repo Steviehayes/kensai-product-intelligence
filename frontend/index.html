@@ -102,8 +102,8 @@
       <h2>Intelligence table <span style="text-transform:none;color:var(--muted)">— click a row for the source snippet</span></h2>
       <div style="overflow:auto; max-height: 46vh;">
         <table id="tbl"><thead><tr>
-          <th>Attribute</th><th>Value</th><th>Confidence</th><th>Flag</th>
-        </tr></thead><tbody id="tblBody"><tr><td colspan="4" class="pad spin">loading…</td></tr></tbody></table>
+          <th>Attribute</th><th>Value</th><th>Source</th><th>Confidence</th><th>Flag</th>
+        </tr></thead><tbody id="tblBody"><tr><td colspan="5" class="pad spin">loading…</td></tr></tbody></table>
       </div>
     </section>
 
@@ -144,16 +144,18 @@ async function loadTable() {
   rows.forEach(r => (byProd[r.product] = byProd[r.product] || []).push(r));
   let html = "";
   for (const prod of Object.keys(byProd)) {
-    html += `<tr><td colspan="4" class="prod" style="padding-top:12px"><b>${esc(prod)}</b></td></tr>`;
+    html += `<tr><td colspan="5" class="prod" style="padding-top:12px"><b>${esc(prod)}</b></td></tr>`;
     byProd[prod].forEach((r, i) => {
       const id = `d_${prod}_${i}`;
       const val = esc(r.value) + (r.unit ? ` <span class="conf">${esc(r.unit)}</span>` : "");
+      const srcIds = [...new Set((r.citations||[]).map(c => c.doc_id))];
+      const src = srcIds.length ? esc(srcIds.join(', ')) : '—';
       const flag = r.flag ? `<span class="badge ${badgeClass[r.flag]||'b-missing'}">${esc(r.flag)}</span>`
                           : `<span class="badge b-ok">ok</span>`;
       html += `<tr class="clickable" onclick="document.getElementById('${id}').classList.toggle('hidden')">
-        <td>${esc(r.attribute)}</td><td>${val}</td><td class="conf">${esc(r.confidence)}</td><td>${flag}</td></tr>`;
+        <td>${esc(r.attribute)}</td><td>${val}</td><td class="conf">${src}</td><td class="conf">${esc(r.confidence)}</td><td>${flag}</td></tr>`;
       const cites = (r.citations||[]).map(citeHtml).join("") || '<div class="cite"><div class="snip">No source — reported as not found.</div></div>';
-      html += `<tr id="${id}" class="detail hidden"><td colspan="4">${cites}</td></tr>`;
+      html += `<tr id="${id}" class="detail hidden"><td colspan="5">${cites}</td></tr>`;
     });
   }
   $('tblBody').innerHTML = html;
