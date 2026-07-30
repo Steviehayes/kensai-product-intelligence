@@ -51,7 +51,10 @@ class GroqChat:
 
     def generate(self, prompt: str) -> str | None:
         import json
+        import ssl
         import urllib.request
+
+        import certifi
 
         body = json.dumps({
             "model": self._model,
@@ -63,10 +66,16 @@ class GroqChat:
         }).encode()
         req = urllib.request.Request(
             "https://api.groq.com/openai/v1/chat/completions", data=body,
-            headers={"Authorization": f"Bearer {self._key}", "Content-Type": "application/json"},
+            headers={
+                "Authorization": f"Bearer {self._key}",
+                "Content-Type": "application/json",
+                # Groq's edge rejects the default Python-urllib agent with a 403.
+                "User-Agent": "kensai-product-intelligence/1.0",
+            },
         )
+        ctx = ssl.create_default_context(cafile=certifi.where())
         try:
-            with urllib.request.urlopen(req, timeout=30) as resp:
+            with urllib.request.urlopen(req, timeout=30, context=ctx) as resp:
                 data = json.load(resp)
             return data["choices"][0]["message"]["content"].strip()
         except Exception as exc:  # noqa: BLE001
