@@ -52,9 +52,7 @@ class KnowledgeBase:
     # -- ingest --------------------------------------------------------------
     def build(self) -> IngestResult:
         metas, chunks, catalogue = load_documents()
-        embedder = build_embedder()
-        self._store = VectorStore(embedder)
-        self._store.add(chunks)
+        self._store = self._build_store(chunks)
         self._embed_backend = self._store.backend
 
         full_texts = {m.id: full_text(m.id, metas) for m in metas}
@@ -67,6 +65,23 @@ class KnowledgeBase:
             documents=len(metas), chunks=len(chunks),
             products=len(catalogue["products"]), embeddings_backend=self._store.backend,
         )
+
+    @staticmethod
+    def _build_store(chunks) -> VectorStore:
+        """Embed into the store; if the primary backend fails at boot (bad key,
+        quota, network) fall back to TF-IDF so the service can never crash on
+        ingest."""
+        embedder = build_embedder()
+        store = VectorStore(embedder)
+        try:
+            store.add(chunks)
+            return store
+        except Exception as exc:  # noqa: BLE001
+            print(f"[ingest] '{embedder.backend}' embedding failed ({exc}); using TF-IDF fallback")
+            from .embeddings import TfidfEmbeddings
+            store = VectorStore(TfidfEmbeddings())
+            store.add(chunks)
+            return store
 
     @property
     def embeddings_backend(self) -> str:
