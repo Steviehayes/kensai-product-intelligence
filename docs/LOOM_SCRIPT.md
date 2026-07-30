@@ -2,6 +2,10 @@
 
 A tight walkthrough. Aim for signal, not jargon. Times are a guide.
 
+**Live demo:** https://kensai-product-intelligence-441530711599.europe-west2.run.app
+— login `kensai` / `Kensai-Review-2026` (Google Cloud Run; deterministic mode unless
+a `GOOGLE_API_KEY` is set). Repo: https://github.com/Steviehayes/kensai-product-intelligence
+
 ---
 
 **0:00 — What it is (20s)**

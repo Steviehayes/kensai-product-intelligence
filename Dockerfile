@@ -1,5 +1,5 @@
-# Single image serves the API + static frontend. Port 7860 is the Hugging Face
-# Spaces default, so the same image runs locally, in Docker, and on a Space.
+# Single image serves the API + static frontend on port 7860. The same image runs
+# locally, under docker compose, and on Google Cloud Run (which routes to --port 7860).
 FROM python:3.12-slim
 
 ENV PYTHONUNBUFFERED=1 \

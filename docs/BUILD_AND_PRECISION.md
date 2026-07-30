@@ -147,8 +147,9 @@ setup. Without an API key it uses TF-IDF retrieval and the deterministic answer
 layer — the table, the flags and the six answers all work. Adding a free Gemini key
 (one line in `.env`) upgrades retrieval to real embeddings and enables full
 natural-language chat for arbitrary questions. The same image runs locally, under
-Docker, and on a Hugging Face Space unchanged, because behaviour is driven entirely
-by environment variables.
+Docker, and on Google Cloud Run unchanged, because behaviour is driven entirely by
+environment variables — including an optional HTTP Basic Auth gate (`APP_USER` /
+`APP_PASSWORD`) that protects the public demo without a line of code changing.
 
 ---
 

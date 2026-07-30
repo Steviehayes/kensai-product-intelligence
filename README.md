@@ -1,13 +1,3 @@
----
-title: Kensai Product Intelligence Agent
-emoji: 🧬
-colorFrom: indigo
-colorTo: blue
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # Kensai — Product Intelligence Agent
 
 A small full-stack agent that turns eight messy, conflicting supplement documents
@@ -19,6 +9,21 @@ answer and every table cell, and an honest "not found" where the corpus is silen
 
 > Built for the Kensai take-home. The documents (not the live web) are the source
 > of truth. British English throughout.
+
+---
+
+## Live demo
+
+**https://kensai-product-intelligence-441530711599.europe-west2.run.app**
+
+Login (HTTP Basic Auth): username **`kensai`** · password **`Kensai-Review-2026`**
+
+Hosted on Google Cloud Run (europe-west2, London): always-on HTTPS, scales to zero.
+The public instance is behind a login so the endpoint can't be abused. It currently
+runs in **deterministic mode** (TF-IDF retrieval + the fully-cited structured layer),
+so the intelligence table, the flags report and the six answers all work. Setting a
+`GOOGLE_API_KEY` (below) additionally enables the Gemini-backed natural-language chat
+for open-ended questions.
 
 ---
 
@@ -53,6 +58,10 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000   # open http://localhost:8000
 pytest -q                                    # run the checks
 ```
+
+**Optional login.** Set both `APP_USER` and `APP_PASSWORD` to gate the whole app
+(API + frontend) behind HTTP Basic Auth — that is how the hosted demo is protected.
+Leave them unset and the app is open (the local default).
 
 ---
 
