@@ -18,10 +18,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 FRONTEND_DIR = BASE_DIR / "frontend"
 
-# --- LLM / embeddings provider (Google Gemini free tier) -------------------
+# --- Chat provider ---------------------------------------------------------
+# Two zero-cost options; whichever key is set wins (Groq first). Groq needs no
+# billing and is the simplest to switch on; Gemini also does embeddings.
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "").strip()
 GEMINI_CHAT_MODEL = os.getenv("GEMINI_CHAT_MODEL", "gemini-2.0-flash")
 GEMINI_EMBED_MODEL = os.getenv("GEMINI_EMBED_MODEL", "models/text-embedding-004")
+
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 
 # --- Retrieval -------------------------------------------------------------
 CHUNK_MAX_CHARS = int(os.getenv("CHUNK_MAX_CHARS", "600"))
@@ -41,5 +46,6 @@ def auth_enabled() -> bool:
     return bool(APP_USER and APP_PASSWORD)
 
 
-def llm_enabled() -> bool:
+def google_enabled() -> bool:
+    """Google key present → Gemini embeddings + Gemini chat are available."""
     return bool(GOOGLE_API_KEY)

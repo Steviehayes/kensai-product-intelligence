@@ -58,7 +58,7 @@ class TfidfEmbeddings:
 
 
 def build_embedder():
-    if config.llm_enabled():
+    if config.google_enabled():
         try:
             return GeminiEmbeddings()
         except Exception as exc:  # noqa: BLE001 - degrade rather than crash on boot

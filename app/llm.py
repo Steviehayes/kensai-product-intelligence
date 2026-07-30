@@ -21,6 +21,8 @@ Answer ONLY from the EVIDENCE snippets provided. Rules:
 
 
 class GeminiChat:
+    backend = "gemini"
+
     def __init__(self) -> None:
         import google.generativeai as genai
 
@@ -34,15 +36,54 @@ class GeminiChat:
             resp = self._model.generate_content(prompt)
             return (resp.text or "").strip()
         except Exception as exc:  # noqa: BLE001
-            print(f"[llm] generation failed: {exc}")
+            print(f"[llm] gemini generation failed: {exc}")
             return None
 
 
-def build_chat() -> GeminiChat | None:
-    if not config.llm_enabled():
-        return None
-    try:
-        return GeminiChat()
-    except Exception as exc:  # noqa: BLE001
-        print(f"[llm] Gemini unavailable ({exc})")
-        return None
+class GroqChat:
+    """Groq's OpenAI-compatible endpoint. Free tier, no billing, no extra deps."""
+
+    backend = "groq"
+
+    def __init__(self) -> None:
+        self._key = config.GROQ_API_KEY
+        self._model = config.GROQ_MODEL
+
+    def generate(self, prompt: str) -> str | None:
+        import json
+        import urllib.request
+
+        body = json.dumps({
+            "model": self._model,
+            "messages": [
+                {"role": "system", "content": _SYSTEM},
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": 0.2,
+        }).encode()
+        req = urllib.request.Request(
+            "https://api.groq.com/openai/v1/chat/completions", data=body,
+            headers={"Authorization": f"Bearer {self._key}", "Content-Type": "application/json"},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json.load(resp)
+            return data["choices"][0]["message"]["content"].strip()
+        except Exception as exc:  # noqa: BLE001
+            print(f"[llm] groq generation failed: {exc}")
+            return None
+
+
+def build_chat():
+    """Whichever key is set wins — Groq first (simplest, no billing), then Gemini."""
+    if config.GROQ_API_KEY:
+        try:
+            return GroqChat()
+        except Exception as exc:  # noqa: BLE001
+            print(f"[llm] Groq unavailable ({exc})")
+    if config.GOOGLE_API_KEY:
+        try:
+            return GeminiChat()
+        except Exception as exc:  # noqa: BLE001
+            print(f"[llm] Gemini unavailable ({exc})")
+    return None
