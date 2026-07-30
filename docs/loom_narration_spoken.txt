@@ -1,0 +1,17 @@
+Hi — this is a small product-intelligence agent I built for the Kensai take-home. The problem it solves is the one you described: eight messy, conflicting documents about three supplements, and the job is to turn them into clean intelligence you can actually trust — where every answer traces back to an exact source, conflicts are flagged, and it never guesses.
+
+On the right is the structured intelligence table — product, attribute, value, the source it came from, a confidence level, and a flag. On the left is the chat box. Let me show you the detail first, because that's really the point of this exercise.
+
+Here's Vitamin B-twelve for MoleQlar. The datasheet says twenty-five micrograms; the Amazon listing says five hundred. The agent doesn't average them or quietly pick one — it shows both with their exact snippets, marks the datasheet value canonical because it's higher-authority and internally consistent at a thousand percent of the reference intake, and raises a conflict flag.
+
+And here's the flip side. Ritual's Vitamin D reads twenty-five micrograms in one source and a thousand I-U in another. Those are the same value — so it deliberately does not flag a conflict. Getting the units right cuts both ways.
+
+Down here it auto-surfaced ten issues. The non-compliant claim you seeded — Ritual's U-K listing says it "boosts your immune system", which the health-claims reference explicitly lists as not-permitted wording. The B-twelve conflict. Wellwoman tagged "suitable for vegans" at one retailer, even though its capsule is gelatin. Values that simply aren't in the documents, reported as "not found". And data-quality notes on the O-C-R'd datasheet and the undated blog.
+
+Let me ask it a couple of things. Is Wellwoman suitable for vegans? No — because of the gelatin capsule, and it flags the retailer that got it wrong. How much B-twelve is in one MoleQlar capsule? It gives the conflict, both figures, both sources.
+
+And notice the trace under each answer — detect, retrieve, reconcile, answer. It works in steps and tools, not a single prompt.
+
+Quickly, on how it's built: four tools — extract, check-compliance, reconcile, and retrieve — orchestrated in the agent. The decision I care most about is that the extraction and the conflict-detection are deterministic, not the language model — because on regulatory data you never want a model silently turning a microgram into a milligram. The model is only used to phrase an answer from evidence it's handed.
+
+Last thing — at ten thousand documents, the in-memory search and re-embedding on start-up break first; I'd move to a proper vector index, like Faiss or Postgres pgvector, with incremental embedding. There's a README with one-command run steps, and a four-page write-up in the repo. Thanks so much — I really enjoyed this one.

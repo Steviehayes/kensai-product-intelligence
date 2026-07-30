@@ -1,0 +1,124 @@
+1
+00:00:00,100 --> 00:00:05,646
+Hi — this is a small product-intelligence agent I built for the Kensai take-home.
+
+2
+00:00:05,596 --> 00:00:21,768
+The problem it solves is the one you described: eight messy, conflicting documents about three supplements, and the job is to turn them into clean intelligence you can actually trust — where every answer traces back to an exact source, conflicts are flagged, and it never guesses.
+
+3
+00:00:21,768 --> 00:00:30,740
+On the right is the structured intelligence table — product, attribute, value, the source it came from, a confidence level, and a flag.
+
+4
+00:00:30,740 --> 00:00:33,409
+On the left is the chat box.
+
+5
+00:00:33,409 --> 00:00:38,734
+Let me show you the detail first, because that's really the point of this exercise.
+
+6
+00:00:38,734 --> 00:00:41,755
+Here's Vitamin B-twelve for MoleQlar.
+
+7
+00:00:41,755 --> 00:00:47,589
+The datasheet says twenty-five micrograms; the Amazon listing says five hundred.
+
+8
+00:00:47,589 --> 00:01:02,055
+The agent doesn't average them or quietly pick one — it shows both with their exact snippets, marks the datasheet value canonical because it's higher-authority and internally consistent at a thousand percent of the reference intake, and raises a conflict flag.
+
+9
+00:01:02,055 --> 00:01:04,451
+And here's the flip side.
+
+10
+00:01:04,451 --> 00:01:11,039
+Ritual's Vitamin D reads twenty-five micrograms in one source and a thousand I-U in another.
+
+11
+00:01:11,039 --> 00:01:15,740
+Those are the same value — so it deliberately does not flag a conflict.
+
+12
+00:01:15,740 --> 00:01:18,943
+Getting the units right cuts both ways.
+
+13
+00:01:18,943 --> 00:01:22,315
+Down here it auto-surfaced ten issues.
+
+14
+00:01:22,315 --> 00:01:32,550
+The non-compliant claim you seeded — Ritual's U-K listing says it "boosts your immune system", which the health-claims reference explicitly lists as not-permitted wording.
+
+15
+00:01:32,550 --> 00:01:34,867
+The B-twelve conflict.
+
+16
+00:01:34,867 --> 00:01:41,013
+Wellwoman tagged "suitable for vegans" at one retailer, even though its capsule is gelatin.
+
+17
+00:01:41,013 --> 00:01:45,870
+Values that simply aren't in the documents, reported as "not found".
+
+18
+00:01:45,870 --> 00:01:50,922
+And data-quality notes on the O-C-R'd datasheet and the undated blog.
+
+19
+00:01:50,922 --> 00:01:53,591
+Let me ask it a couple of things.
+
+20
+00:01:53,591 --> 00:01:56,521
+Is Wellwoman suitable for vegans?
+
+21
+00:01:56,521 --> 00:02:02,094
+No — because of the gelatin capsule, and it flags the retailer that got it wrong.
+
+22
+00:02:02,094 --> 00:02:05,780
+How much B-twelve is in one MoleQlar capsule?
+
+23
+00:02:05,780 --> 00:02:09,906
+It gives the conflict, both figures, both sources.
+
+24
+00:02:09,906 --> 00:02:16,195
+And notice the trace under each answer — detect, retrieve, reconcile, answer.
+
+25
+00:02:16,195 --> 00:02:20,167
+It works in steps and tools, not a single prompt.
+
+26
+00:02:20,167 --> 00:02:29,320
+Quickly, on how it's built: four tools — extract, check-compliance, reconcile, and retrieve — orchestrated in the agent.
+
+27
+00:02:29,320 --> 00:02:41,859
+The decision I care most about is that the extraction and the conflict-detection are deterministic, not the language model — because on regulatory data you never want a model silently turning a microgram into a milligram.
+
+28
+00:02:41,859 --> 00:02:46,182
+The model is only used to phrase an answer from evidence it's handed.
+
+29
+00:02:46,182 --> 00:02:59,125
+Last thing — at ten thousand documents, the in-memory search and re-embedding on start-up break first; I'd move to a proper vector index, like Faiss or Postgres pgvector, with incremental embedding.
+
+30
+00:02:59,125 --> 00:03:04,503
+There's a README with one-command run steps, and a four-page write-up in the repo.
+
+31
+00:03:04,503 --> 00:03:08,214
+Thanks so much — I really enjoyed this one.
+
