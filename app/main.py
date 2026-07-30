@@ -21,6 +21,7 @@ from pydantic import BaseModel
 
 from . import config
 from .agent import KnowledgeBase
+from .auth import BasicAuthMiddleware
 
 kb = KnowledgeBase()
 
@@ -43,6 +44,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Kensai Product Intelligence Agent", version="1.0.0", lifespan=lifespan)
+app.add_middleware(BasicAuthMiddleware)  # no-op unless APP_USER/APP_PASSWORD are set
 
 
 class Query(BaseModel):

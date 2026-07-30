@@ -30,6 +30,16 @@ RETRIEVAL_TOP_K = int(os.getenv("RETRIEVAL_TOP_K", "6"))
 # --- Server ----------------------------------------------------------------
 PORT = int(os.getenv("PORT", "7860"))  # 7860 is the Hugging Face Spaces default
 
+# --- Optional access gate --------------------------------------------------
+# If both are set, the whole app requires HTTP Basic Auth. Left unset for local
+# dev so the app stays open with zero config.
+APP_USER = os.getenv("APP_USER", "").strip()
+APP_PASSWORD = os.getenv("APP_PASSWORD", "").strip()
+
+
+def auth_enabled() -> bool:
+    return bool(APP_USER and APP_PASSWORD)
+
 
 def llm_enabled() -> bool:
     return bool(GOOGLE_API_KEY)
