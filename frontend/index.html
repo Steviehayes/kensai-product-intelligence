@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kensai · Product Intelligence Agent</title>
+<style>
+  :root {
+    --bg: #0f1420; --panel: #171d2b; --panel2: #1e2536; --line: #2a3346;
+    --text: #e8ecf4; --muted: #93a0b8; --accent: #6ea8fe; --accent2: #4f7fe0;
+    --amber: #f0b429; --red: #f26d6d; --grey: #8a97ad; --green: #56c288;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  a { color: var(--accent); }
+  header { padding: 18px 24px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  header h1 { font-size: 18px; margin: 0; font-weight: 650; }
+  header .tag { color: var(--muted); font-size: 13px; }
+  #status { margin-left: auto; font-size: 12px; color: var(--muted); }
+  #status b { color: var(--text); font-weight: 600; }
+  .wrap { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.05fr); gap: 20px;
+    padding: 20px 24px; max-width: 1400px; margin: 0 auto; align-items: start; }
+  @media (max-width: 960px) { .wrap { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .card h2 { font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted);
+    margin: 0; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  .pad { padding: 16px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
+  .chip { background: var(--panel2); border: 1px solid var(--line); color: var(--muted);
+    padding: 5px 10px; border-radius: 999px; font-size: 12px; cursor: pointer; }
+  .chip:hover { color: var(--text); border-color: var(--accent2); }
+  .ask { display: flex; gap: 8px; }
+  textarea { flex: 1; resize: vertical; min-height: 52px; background: var(--panel2); color: var(--text);
+    border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; font: inherit; }
+  button.send { background: var(--accent2); color: #fff; border: 0; border-radius: 9px;
+    padding: 0 18px; font-weight: 600; cursor: pointer; }
+  button.send:disabled { opacity: .5; cursor: default; }
+  .answer { margin-top: 14px; }
+  .answer .txt { white-space: pre-wrap; background: var(--panel2); border: 1px solid var(--line);
+    border-radius: 9px; padding: 12px 14px; }
+  .meta { font-size: 12px; color: var(--muted); margin: 8px 2px; }
+  .cite { border-left: 3px solid var(--accent2); background: #141a28; padding: 8px 12px;
+    margin: 8px 0; border-radius: 0 8px 8px 0; }
+  .cite .src { font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+  .cite .snip { font-size: 13px; color: #cfd8e8; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+  tr.clickable { cursor: pointer; }
+  tr.clickable:hover { background: var(--panel2); }
+  .prod { text-transform: capitalize; color: var(--muted); font-size: 12px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .b-conflict { background: rgba(240,180,41,.16); color: var(--amber); }
+  .b-compliance { background: rgba(242,109,109,.16); color: var(--red); }
+  .b-missing { background: rgba(138,151,173,.18); color: var(--grey); }
+  .b-ok { background: rgba(86,194,136,.16); color: var(--green); }
+  .conf { font-size: 12px; color: var(--muted); }
+  .detail td { background: #131826; }
+  .flag { border: 1px solid var(--line); border-radius: 9px; padding: 11px 13px; margin-bottom: 10px; }
+  .flag .head { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .flag .k { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+  .flag.non_compliant_claim { border-left: 3px solid var(--red); }
+  .flag.conflict { border-left: 3px solid var(--amber); }
+  .flag.missing_value { border-left: 3px solid var(--grey); }
+  .flag.data_quality { border-left: 3px solid var(--accent2); }
+  .flag .d { font-size: 13.5px; color: #d6deec; }
+  .hidden { display: none; }
+  .spin { color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Kensai · Product Intelligence Agent</h1>
+  <span class="tag">multi-source supplement intelligence, every cell traced to a source</span>
+  <span id="status">loading…</span>
+</header>
+
+<div class="wrap">
+  <!-- left: chat -->
+  <section class="card">
+    <h2>Ask the agent</h2>
+    <div class="pad">
+      <div class="chips" id="chips"></div>
+      <div class="ask">
+        <textarea id="q" placeholder="Ask about dose, vegan status, B12, price, or claim compliance…"></textarea>
+        <button class="send" id="send">Ask</button>
+      </div>
+      <div class="answer hidden" id="answer">
+        <div class="txt" id="answerText"></div>
+        <div class="meta" id="answerMeta"></div>
+        <div id="answerCites"></div>
+        <div id="answerFlags"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- right: intelligence + flags -->
+  <div style="display:flex; flex-direction:column; gap:20px;">
+    <section class="card">
+      <h2>Intelligence table <span style="text-transform:none;color:var(--muted)">— click a row for the source snippet</span></h2>
+      <div style="overflow:auto; max-height: 46vh;">
+        <table id="tbl"><thead><tr>
+          <th>Attribute</th><th>Value</th><th>Confidence</th><th>Flag</th>
+        </tr></thead><tbody id="tblBody"><tr><td colspan="4" class="pad spin">loading…</td></tr></tbody></table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Flags report <span style="text-transform:none;color:var(--muted)">— conflicts · missing values · non-compliant claims</span></h2>
+      <div class="pad" id="flags"><span class="spin">loading…</span></div>
+    </section>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => (s ?? "").replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const badgeClass = { conflict:'b-conflict', compliance:'b-compliance', missing:'b-missing' };
+
+function citeHtml(c) {
+  const link = c.url ? ` · <a href="${esc(c.url)}" target="_blank" rel="noopener">source</a>` : "";
+  return `<div class="cite"><div class="src">[${esc(c.doc_id)}]${link}</div><div class="snip">“${esc(c.snippet)}”</div></div>`;
+}
+function flagHtml(f) {
+  const cites = (f.citations||[]).map(citeHtml).join("");
+  return `<div class="flag ${f.kind}"><div class="head"><span class="k">${f.kind.replace(/_/g,' ')}</span>
+    <span>${esc(f.summary)}</span></div><div class="d">${esc(f.detail)}</div>${cites}</div>`;
+}
+
+async function loadStatus() {
+  const h = await (await fetch('/health')).json();
+  $('status').innerHTML = `embeddings <b>${esc(h.embeddings_backend)}</b> · chat <b>${h.llm_enabled ? 'Gemini' : 'offline (extractive)'}</b> · ${h.intelligence_rows} facts · ${h.flags} flags`;
+}
+async function loadExamples() {
+  const ex = await (await fetch('/examples')).json();
+  $('chips').innerHTML = ex.map(q => `<span class="chip">${esc(q)}</span>`).join("");
+  [...document.querySelectorAll('.chip')].forEach((c,i)=> c.onclick = () => { $('q').value = ex[i]; ask(); });
+}
+async function loadTable() {
+  const rows = await (await fetch('/intelligence')).json();
+  let byProd = {};
+  rows.forEach(r => (byProd[r.product] = byProd[r.product] || []).push(r));
+  let html = "";
+  for (const prod of Object.keys(byProd)) {
+    html += `<tr><td colspan="4" class="prod" style="padding-top:12px"><b>${esc(prod)}</b></td></tr>`;
+    byProd[prod].forEach((r, i) => {
+      const id = `d_${prod}_${i}`;
+      const val = esc(r.value) + (r.unit ? ` <span class="conf">${esc(r.unit)}</span>` : "");
+      const flag = r.flag ? `<span class="badge ${badgeClass[r.flag]||'b-missing'}">${esc(r.flag)}</span>`
+                          : `<span class="badge b-ok">ok</span>`;
+      html += `<tr class="clickable" onclick="document.getElementById('${id}').classList.toggle('hidden')">
+        <td>${esc(r.attribute)}</td><td>${val}</td><td class="conf">${esc(r.confidence)}</td><td>${flag}</td></tr>`;
+      const cites = (r.citations||[]).map(citeHtml).join("") || '<div class="cite"><div class="snip">No source — reported as not found.</div></div>';
+      html += `<tr id="${id}" class="detail hidden"><td colspan="4">${cites}</td></tr>`;
+    });
+  }
+  $('tblBody').innerHTML = html;
+}
+async function loadFlags() {
+  const flags = await (await fetch('/flags')).json();
+  const order = { non_compliant_claim:0, conflict:1, missing_value:2, data_quality:3 };
+  flags.sort((a,b)=> (order[a.kind]??9)-(order[b.kind]??9));
+  $('flags').innerHTML = flags.map(flagHtml).join("") || "No flags.";
+}
+
+let busy = false;
+async function ask() {
+  const question = $('q').value.trim();
+  if (!question || busy) return;
+  busy = true; $('send').disabled = true;
+  $('answer').classList.remove('hidden');
+  $('answerText').textContent = "Thinking…";
+  $('answerMeta').textContent = ""; $('answerCites').innerHTML = ""; $('answerFlags').innerHTML = "";
+  try {
+    const r = await (await fetch('/query', {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({question})})).json();
+    $('answerText').textContent = r.answer;
+    $('answerMeta').innerHTML = `steps: ${r.steps.map(esc).join(" → ")} · ${r.used_llm ? 'Gemini' : 'extractive'}`;
+    $('answerCites').innerHTML = (r.citations||[]).map(citeHtml).join("");
+    $('answerFlags').innerHTML = (r.flags||[]).map(flagHtml).join("");
+  } catch (e) {
+    $('answerText').textContent = "Error: " + e;
+  }
+  busy = false; $('send').disabled = false;
+}
+$('send').onclick = ask;
+$('q').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) ask(); });
+
+loadStatus(); loadExamples(); loadTable(); loadFlags();
+</script>
+</body>
+</html>

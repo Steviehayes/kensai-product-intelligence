@@ -1,0 +1,106 @@
+{
+  "products": {
+    "ritual": {
+      "name": "Ritual Essential for Women 18+",
+      "canonical_url": "https://ritual.com/products/essential-for-women-multivitamin"
+    },
+    "wellwoman": {
+      "name": "Vitabiotics Wellwoman Original",
+      "canonical_url": "https://vitabiotics.com/products/wellwoman"
+    },
+    "moleqlar": {
+      "name": "MoleQlar Vitamin B Komplex",
+      "canonical_url": "https://moleqlar.com/products/vitamin-b-komplex"
+    }
+  },
+  "documents": [
+    {
+      "id": "01_ritual_official",
+      "file": "01_ritual_essential_for_women_official.md",
+      "title": "Ritual Essential for Women 18+ — official product page",
+      "products": ["ritual"],
+      "market": "US",
+      "format": "markdown",
+      "origin": "manufacturer",
+      "authority": "high",
+      "url": "https://ritual.com/products/essential-for-women-multivitamin"
+    },
+    {
+      "id": "02_ritual_amazon_uk",
+      "file": "02_ritual_amazon_co_uk_listing.txt",
+      "title": "Ritual Essential for Women — Amazon.co.uk marketplace listing (ships from US)",
+      "products": ["ritual"],
+      "market": "UK",
+      "format": "text",
+      "origin": "marketplace",
+      "authority": "medium",
+      "url": "https://www.amazon.co.uk"
+    },
+    {
+      "id": "03_wellwoman_official",
+      "file": "03_vitabiotics_wellwoman_original_official.md",
+      "title": "Vitabiotics Wellwoman Original — official product page",
+      "products": ["wellwoman"],
+      "market": "UK",
+      "format": "markdown",
+      "origin": "manufacturer",
+      "authority": "high",
+      "url": "https://vitabiotics.com/products/wellwoman"
+    },
+    {
+      "id": "04_wellwoman_holland_barrett",
+      "file": "04_wellwoman_holland_and_barrett_listing.html",
+      "title": "Vitabiotics Wellwoman Original — Holland & Barrett retailer listing",
+      "products": ["wellwoman"],
+      "market": "UK",
+      "format": "html",
+      "origin": "retailer",
+      "authority": "medium",
+      "url": "https://www.hollandandbarrett.com"
+    },
+    {
+      "id": "05_moleqlar_datasheet",
+      "file": "05_moleqlar_vitamin_b_komplex_datasheet_PDF_extract.txt",
+      "title": "MoleQlar Vitamin B Komplex — official datasheet (OCR'd PDF extract)",
+      "products": ["moleqlar"],
+      "market": "EU",
+      "format": "text-ocr",
+      "origin": "manufacturer",
+      "authority": "high",
+      "url": "https://moleqlar.com/products/vitamin-b-komplex"
+    },
+    {
+      "id": "06_moleqlar_amazon_de",
+      "file": "06_moleqlar_amazon_de_listing.txt",
+      "title": "MoleQlar Vitamin B Komplex — Amazon.de marketplace listing",
+      "products": ["moleqlar"],
+      "market": "EU",
+      "format": "text",
+      "origin": "marketplace",
+      "authority": "medium",
+      "url": "https://www.amazon.de"
+    },
+    {
+      "id": "07_comparison_review",
+      "file": "07_supplement_comparison_review_UNDATED.txt",
+      "title": "Third-party comparison blog review (UNDATED)",
+      "products": ["ritual", "wellwoman", "moleqlar"],
+      "market": "editorial",
+      "format": "text",
+      "origin": "editorial",
+      "authority": "low",
+      "url": null
+    },
+    {
+      "id": "08_health_claims_reference",
+      "file": "08_eu_uk_health_claims_reference.md",
+      "title": "EU / UK nutrition & health claims reference (condensed)",
+      "products": [],
+      "market": "EU/UK",
+      "format": "markdown",
+      "origin": "regulatory-reference",
+      "authority": "reference",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32006R1924"
+    }
+  ]
+}
